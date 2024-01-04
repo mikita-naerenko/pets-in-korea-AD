@@ -20,7 +20,6 @@ export default async function SetupLayout({
 
   return (
     <>
-      {/* @ts-expect-error Async Server Component */}
       <Navbar />
       {children}
     </>
