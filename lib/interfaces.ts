@@ -58,10 +58,10 @@ export interface News {
   title: string;
   description: string;
   content: string;
-  nameOfSource?: string;
-  linkToSource?: string;
-  authorName?: string;
-  authorLink?: string;
+  nameOfSource: string | null;
+  linkToSource: string | null;
+  authorName: string | null;
+  authorLink: string | null;
   createdAt: Date;
   updatedAt: Date;
   images?: NewsImg[];
