@@ -144,7 +144,7 @@ export default function CreateNewsForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      <p className="mt-3">Paste link to news' source</p>
+                      <p className="mt-3">Paste link to news&apos; source</p>
                       <p className=" text-xs text-slate-400 mb-3"></p>
                     </FormLabel>
                     <FormControl>
@@ -164,7 +164,7 @@ export default function CreateNewsForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      <p className="mt-3">Name of news' source</p>
+                      <p className="mt-3">Name of news&apos; source</p>
                     </FormLabel>
                     <FormControl>
                       <Input

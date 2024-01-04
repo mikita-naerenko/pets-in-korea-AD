@@ -8,7 +8,7 @@ import { News } from "@/lib/interfaces";
 const NewsTable = ({ newsList }: { newsList: News[] }) => {
   return (
     <div>
-      <p className="text-center my-3 font-bold text-3xl">News' table</p>
+      <p className="text-center my-3 font-bold text-3xl">News&apos; table</p>
       <Table>
         <TableHeader className="bg-slate-200">
           <TableRow>

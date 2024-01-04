@@ -221,7 +221,7 @@ export default function EditForm({ article }: ArticleProps) {
               <FormLabel>
                 <p className=" text-xs text-slate-400 mt-4">
                   If article has been copied from another resource and you know
-                  author's account, fill out this field
+                  author&apos;s account, fill out this field
                 </p>
               </FormLabel>
               <FormControl>

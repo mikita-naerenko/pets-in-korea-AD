@@ -24,7 +24,9 @@ const ArticlesTable = () => {
 
   return (
     <div>
-      <p className="text-center my-3 font-bold text-3xl">Article's table</p>
+      <p className="text-center my-3 font-bold text-3xl">
+        Article&apos;s table
+      </p>
       <Table>
         <TableHeader className="bg-slate-200">
           <TableRow>
@@ -33,7 +35,7 @@ const ArticlesTable = () => {
             <TableHead>Description</TableHead>
             <TableHead>Link To Source</TableHead>
             <TableHead>Name of Source</TableHead>
-            <TableHead>Author's name</TableHead>
+            <TableHead>Author&apos;s name</TableHead>
             <TableHead>Link to Author</TableHead>
             <TableHead>
               CreateAt

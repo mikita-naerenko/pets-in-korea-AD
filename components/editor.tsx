@@ -1,5 +1,5 @@
 "use client";
-import React, { forwardRef, useEffect, useRef, ForwardedRef } from "react";
+import React, { forwardRef, ForwardedRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 
 interface TextEditorProps {
@@ -31,5 +31,5 @@ const TextEditor = forwardRef(
     );
   }
 );
-
+TextEditor.displayName = "TextEditor";
 export default TextEditor;
