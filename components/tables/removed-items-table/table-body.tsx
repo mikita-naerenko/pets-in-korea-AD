@@ -14,9 +14,10 @@ const RemovedItemsTableBody: React.FC<{ items: RemovedItem[] }> = ({
 
   const sortedArticles = (articles: RemovedItem[], selected: string) => {
     const sortArticlesByCreate = (items: RemovedItem[]) =>
-      items.sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      items.sort((a, b) =>
+        a.createdAt && b.createdAt
+          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          : new Date(a.removedAt).getTime() - new Date(b.removedAt).getTime()
       );
 
     const sortArticlesByUpdate = (items: RemovedItem[]) =>
@@ -61,7 +62,9 @@ const RemovedItemsTableBody: React.FC<{ items: RemovedItem[] }> = ({
                 ""
               )}
             </TableCell> */}
-            <TableCell>{new Date(el.createdAt).toLocaleString()}</TableCell>
+            <TableCell>
+              {el.createdAt ? new Date(el.createdAt).toLocaleString() : "-"}
+            </TableCell>
             <TableCell>{new Date(el.removedAt).toLocaleString()}</TableCell>
             <TableCell>
               <MoveToTrashButton

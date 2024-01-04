@@ -29,8 +29,9 @@ export default function ArticlesTableBody() {
   const selectedTags = new Set(selectedTagsState.selected);
   const filteresArticles =
     selectedTags.size > 0
-      ? articles.filter((article) =>
-          article.tags.some((tag) => selectedTags.has(tag.id))
+      ? articles.filter(
+          (article) =>
+            article.tags && article.tags.some((tag) => selectedTags.has(tag.id))
         )
       : articles;
 
@@ -83,7 +84,7 @@ export default function ArticlesTableBody() {
           <TableRow onClick={() => router.push(el.id)} key={el.id}>
             <TableCell className="font-medium">{el.title}</TableCell>
             <TableCell className="font-medium">
-              {el.images.length > 0 ? (
+              {el.images && el.images.length > 0 ? (
                 <Image
                   style={{ minWidth: "100px" }}
                   width={70}

@@ -78,8 +78,8 @@ export default function EditForm({ article }: ArticleProps) {
       linkToSource: article.linkToSource || "",
       authorName: article.authorName || "",
       authorLink: article.authorLink || "",
-      tagsList: article.tags.map((tag) => tag.id),
-      images: article.images.length > 0 ? article.images : [],
+      tagsList: (article.tags && article.tags.map((tag) => tag.id)) || [],
+      images: article.images && article.images.length > 0 ? article.images : [],
     },
   });
 
