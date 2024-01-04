@@ -4,7 +4,10 @@ import { clerkClient } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
 
-export async function GET({ params }: { params: { storeId: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   try {
     const article = await prismadb.articles.findFirst({
       where: {
