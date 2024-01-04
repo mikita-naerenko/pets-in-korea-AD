@@ -4,7 +4,7 @@ import RemovedItemsTable from "@/components/tables/removed-items-table/removed-i
 import { RemovedItem } from "@/lib/interfaces";
 
 export default async function Page() {
-  const items = await prismadb.trash.findMany();
+  const items: RemovedItem[] = await prismadb.trash.findMany();
 
   return (
     <>{items ? <RemovedItemsTable items={items} /> : <p>Items not found</p>}</>

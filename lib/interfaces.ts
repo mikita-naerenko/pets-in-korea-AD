@@ -42,11 +42,11 @@ export interface RemovedItem {
   title?: string | null;
   description?: string | null;
   content?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | null;
+  updatedAt: Date | null;
   tags?: JsonValue;
   images?: JsonValue;
-  themeId?: string;
+  themeId?: string | null;
   phrases?: JsonValue | null;
   rusTranslates?: JsonValue;
   engTranslates?: JsonValue;
