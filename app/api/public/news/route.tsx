@@ -45,6 +45,11 @@ export async function GET(req: Request) {
         include: { images: true },
       });
       return NextResponse.json(randomArticles);
+    } else {
+      const news = await prismadb.news.findMany({
+        include: { images: true },
+      });
+      return NextResponse.json(news);
     }
   } catch (error) {
     console.log("[NEWS_GET]", error);
