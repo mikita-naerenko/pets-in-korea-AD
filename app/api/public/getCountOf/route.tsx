@@ -1,8 +1,8 @@
 import { Request } from "express";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 
-export async function GET(req: Request) {
+export async function GET(req: Request | NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const target = searchParams.get("target") || undefined;
