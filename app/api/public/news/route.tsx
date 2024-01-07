@@ -9,6 +9,8 @@ export async function GET(req: Request) {
     const take = searchParams.get("take");
     const id = searchParams.get("id");
     const random = searchParams.get("random") || undefined;
+    const offset = searchParams.get("offset") || undefined;
+    const limit = searchParams.get("limit") || undefined;
 
     const takeNumber = take ? parseInt(take, 10) : undefined;
 
@@ -45,6 +47,18 @@ export async function GET(req: Request) {
         include: { images: true },
       });
       return NextResponse.json(randomArticles);
+    } else if (offset && limit) {
+      const offsetNumber = parseInt(offset, 10);
+      const limitNumber = parseInt(limit, 10);
+      const news = await prismadb.news.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: { images: true },
+        skip: offsetNumber,
+        take: limitNumber,
+      });
+      return NextResponse.json(news);
     } else {
       const news = await prismadb.news.findMany({
         include: { images: true },
