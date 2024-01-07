@@ -31,3 +31,7 @@ export async function GET(req: Request | NextRequest) {
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+// git add .
+// git commit -m 'fix'
+// git push
