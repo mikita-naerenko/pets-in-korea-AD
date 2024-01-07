@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { getRandom } from "@/lib/utils";
 
-export async function GET(req: Request) {
+export async function GET(req: Request | NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
