@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 
