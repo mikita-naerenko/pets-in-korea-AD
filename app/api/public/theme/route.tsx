@@ -11,7 +11,14 @@ export async function GET(req: Request) {
         where: {
           id,
         },
-        include: { phrases: true },
+        include: {
+          phrases: {
+            include: {
+              rusTranslates: true,
+              engTranslates: true,
+            },
+          },
+        },
       });
       return NextResponse.json(theme);
     } else {
