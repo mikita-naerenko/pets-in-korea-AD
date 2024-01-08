@@ -9,6 +9,7 @@ export async function GET(req: Request | NextRequest) {
     const tagId = searchParams.get("tagId") || undefined;
     const id = searchParams.get("id") || undefined;
     const random = searchParams.get("random") || undefined;
+    const tagLabel = searchParams.get("tagLabel") || undefined;
 
     if (random) {
       // random
@@ -39,6 +40,20 @@ export async function GET(req: Request | NextRequest) {
           tags: {
             some: {
               id: tagId,
+            },
+          },
+        },
+        include: { tags: true, images: true },
+      });
+
+      return NextResponse.json(articles);
+    } else if (tagLabel) {
+      //By tag's name
+      const articles = await prismadb.articles.findMany({
+        where: {
+          tags: {
+            some: {
+              label: tagLabel,
             },
           },
         },
