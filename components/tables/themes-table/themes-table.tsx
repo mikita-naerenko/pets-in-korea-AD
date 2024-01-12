@@ -11,7 +11,11 @@ export default function ThemesTable({ themes }: { themes: Theme[] }) {
       <Table>
         <TableHeader className="bg-slate-200">
           <TableRow>
-            <TableHead>Theme</TableHead>
+            <TableHead>Label</TableHead>
+            <TableHead>rusLabel</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Tags</TableHead>
+            <TableHead>Image</TableHead>
             <TableHead>Number of phrases</TableHead>
             <TableHead>CreateAt</TableHead>
             <TableHead>UpdateAt</TableHead>

@@ -16,7 +16,7 @@ export default async function Page(params: Params) {
     where: {
       id: params.params.newsId,
     },
-    include: { images: true },
+    include: { images: true, tags: true },
   });
 
   return (

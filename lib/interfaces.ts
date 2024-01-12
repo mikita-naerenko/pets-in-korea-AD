@@ -19,12 +19,33 @@ export interface Article {
 export interface TagList {
   id: string;
   label: string;
+  rusTitle: string;
   articles: Article[] | [];
 }
 
 export interface Tag {
   id: string;
   label: string;
+  rusTitle: string;
+  articles?: Article[];
+  images?: TagImage[];
+  theme?: Theme[];
+  news?: News[];
+}
+
+export interface TagImage {
+  id: string;
+  tagId: string;
+  createdAt: Date;
+  url: string;
+  updatedAt: Date;
+}
+export interface ThemeImage {
+  id: string;
+  themeId: string;
+  createdAt: Date;
+  url: string;
+  updatedAt: Date;
 }
 
 export interface Img {
@@ -40,7 +61,14 @@ export interface RemovedItem {
   removedItemType: string;
   removedAt: Date;
   title?: string | null;
+  label?: string | null;
+  rusLabel?: string | null;
+  nameOfSource?: string | null;
+  linkToSource?: string | null;
+  authorName?: string | null;
+  authorLink?: string | null;
   description?: string | null;
+  koreanPhraseId?: string | null;
   content?: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -65,6 +93,7 @@ export interface News {
   createdAt: Date;
   updatedAt: Date;
   images?: NewsImg[];
+  tags?: Tag[];
 }
 
 export interface NewsImg {
@@ -78,6 +107,10 @@ export interface NewsImg {
 export interface Theme {
   id: string;
   label: string;
+  description: string;
+  rusLabel: string;
+  images: ThemeImage[] | [];
+  tags: Tag[] | [];
   createdAt: Date;
   updatedAt: Date;
   phrases: Phrase[] | [];

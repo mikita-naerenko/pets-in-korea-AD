@@ -6,10 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TagList } from "@/lib/interfaces";
+import { Tag } from "@/lib/interfaces";
 import TagsTableBody from "./table-body";
 
-const TagsTable = ({ tagsList }: { tagsList: TagList[] }) => {
+const TagsTable = ({ tagsList }: { tagsList: Tag[] }) => {
   return (
     <div>
       <p className="text-center my-3 font-bold text-3xl">All Tags</p>
@@ -17,6 +17,8 @@ const TagsTable = ({ tagsList }: { tagsList: TagList[] }) => {
         <TableHeader className="bg-slate-200">
           <TableRow>
             <TableHead>Label</TableHead>
+            <TableHead>RusTitle</TableHead>
+            <TableHead>Image</TableHead>
             <TableHead>Count of relations</TableHead>
             <TableHead>View all Related Article</TableHead>
             <TableHead>Tools Bar</TableHead>

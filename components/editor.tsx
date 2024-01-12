@@ -12,7 +12,7 @@ const TextEditor = forwardRef(
     return (
       <Editor
         id="content"
-        apiKey="17lxthf1h75z6755oysf1x7ikb62t562pk66f5s16ykuzs03"
+        apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
         value={field.value}
         onEditorChange={(content, editor) => {
           field.onChange(content);
@@ -25,6 +25,7 @@ const TextEditor = forwardRef(
           tinycomments_mode: "embedded",
           tinycomments_author: "Author name",
           language: "ru",
+          height: 800,
         }}
         ref={ref}
       />

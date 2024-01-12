@@ -9,8 +9,10 @@ import NewsTable from "@/components/tables/news-table/news-table";
 const RootPage = async () => {
   const tags = await prismadb.tag.findMany();
 
-  const themes: Theme[] = await prismadb.theme.findMany({
+  const themes = await prismadb.theme.findMany({
     include: {
+      images: true,
+      tags: true,
       phrases: {
         include: {
           rusTranslates: true,

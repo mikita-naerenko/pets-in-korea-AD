@@ -17,37 +17,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-hot-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import ImageUpload from "../ui/image-upload";
-import { News, Tag } from "@/lib/interfaces";
+import { Article, Tag, Theme } from "@/lib/interfaces";
 import TextEditor from "../editor";
 
-const formSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  content: z.string().min(1),
-  nameOfSource: z.string().min(2).optional().or(z.literal("")),
-  linkToSource: z
-    .string()
-    .min(2)
-    .url({ message: "Invalid url" })
-    .optional()
-    .or(z.literal("")),
-  authorName: z.string().min(2).optional().or(z.literal("")),
-  authorLink: z
-    .string()
-    .min(2)
-    .url({ message: "Invalid url" })
-    .optional()
-    .or(z.literal("")),
-  images: z.object({ url: z.string() }).array(),
-  tagsList: z.array(z.string()).refine((data) => data.length > 0, {
-    message: "Please select at least one tag",
-  }),
-});
+// interface Tag {
+//   id: string;
+//   label: string;
+// }
 
 interface ApiResponse<T> {
   data: T[];
@@ -57,23 +37,40 @@ interface ApiResponse<T> {
   config: object;
 }
 
-export default function EditNewsForm({ news }: { news: News }) {
+export default function EditThemeForm({ theme }: { theme: Theme }) {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [themesList, setThemesList] = useState<Theme[]>([]);
   const [tagsList, setTegsList] = useState<Tag[]>([]);
+  const router = useRouter();
+
+  const formSchema = z.object({
+    rusLabel: z.string().min(1).max(300),
+    label: z
+      .string()
+      .min(1)
+      .refine(
+        (value) => {
+          // Check if the value is not in the existing theme list
+          const isTagNotExist = !themesList.some(
+            (theme) => theme.label === value
+          );
+          return isTagNotExist;
+        },
+        { message: "The theme already exists" }
+      ),
+    description: z.string().min(1).max(200),
+    tagsList: z.array(z.string()),
+    images: z.object({ url: z.string() }).array(),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: news.title,
-      description: news.description,
-      content: news.content,
-      nameOfSource: news.nameOfSource || "",
-      linkToSource: news.linkToSource || "",
-      authorName: news.authorName || "",
-      authorLink: news.authorLink || "",
-      images: news.images && news.images.length > 0 ? news.images : [],
-      tagsList: (news.tags && news.tags.map((tag) => tag.id)) || [],
+      label: theme.label || "",
+      rusLabel: theme.rusLabel || "",
+      description: theme.description || "",
+      tagsList: (theme.tags && theme.tags.map((tag) => tag.id)) || [],
+      images: theme.images && theme.images.length > 0 ? theme.images : [],
     },
   });
 
@@ -92,12 +89,10 @@ export default function EditNewsForm({ news }: { news: News }) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true);
-      const response = await axios.patch(`/api/news/${news.id}`, values);
-      toast.success("News has been edited");
-      console.log("News has been edited");
+      const response = await axios.patch(`/api/theme/${theme.id}`, values);
+      console.log("Theme has been edited");
+      toast.success("Theme has been edited");
       router.push("/");
-      //   window.location.assign(`/${response.data.id}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data, {
@@ -107,7 +102,6 @@ export default function EditNewsForm({ news }: { news: News }) {
         toast.error("Something went wrong");
       }
     } finally {
-      setLoading(false);
     }
   };
 
@@ -119,21 +113,39 @@ export default function EditNewsForm({ news }: { news: News }) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormDescription className="text-center text-3xl">
-          Edit News
+          Edit Theme
         </FormDescription>
         <FormField
           control={form.control}
-          name="title"
+          name="label"
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                <p className="mt-3">Title length: {field.value.length}</p>
-                <p className=" text-xs text-slate-400 mb-3">
-                  Recommended length between 10 and 60 characters
-                </p>
+                <p className="mt-4">Label length: {field.value.length}</p>
+                <p className=" text-xs text-slate-400 mb-3">Maxlength - 300</p>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Title of Article" {...field} />
+                <Input disabled={loading} placeholder="label" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="rusLabel"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                <p className="mt-4">RusLabel length: {field.value.length}</p>
+                <p className=" text-xs text-slate-400 mb-3">Maxlength - 300</p>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  disabled={loading}
+                  placeholder="Russian label"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,96 +157,17 @@ export default function EditNewsForm({ news }: { news: News }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                <p className="mt-3">Description length: {field.value.length}</p>
+                <p className="mt-4">Description length: {field.value.length}</p>
                 <p className=" text-xs text-slate-400 mb-3">
-                  Recommended length between 50 and 150 characters
+                  *Recommended length between 50 and 150 characters
                 </p>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Description of Article" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <TextEditor {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="nameOfSource"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                <p className=" text-xs text-slate-400 mt-4">
-                  If article has been copied from another resource, fill out
-                  name of resource
-                </p>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Name of resource" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="linkToSource"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                <p className=" text-xs text-slate-400 mt-4">
-                  If article has been copied from another resource, fill out
-                  link to resource
-                </p>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Link to resource" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="authorName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                <p className=" text-xs text-slate-400 mt-4">
-                  If article has author, fill out this field
-                </p>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Author's name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="authorLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                <p className=" text-xs text-slate-400 mt-4">
-                  If article has been copied from another resource and you know
-                  author&apos;s account, fill out this field
-                </p>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Link to the author" {...field} />
+                <Input
+                  disabled={loading}
+                  placeholder="Description of Article"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -248,8 +181,8 @@ export default function EditNewsForm({ news }: { news: News }) {
               <FormLabel>Images</FormLabel>
               <FormControl>
                 <ImageUpload
-                  editItem={news}
-                  editItemType="news"
+                  editItem={theme}
+                  editItemType="theme"
                   value={field.value.map((image) => image.url)}
                   disabled={loading}
                   onChange={(url) => field.onChange([...field.value, { url }])}
@@ -306,17 +239,16 @@ export default function EditNewsForm({ news }: { news: News }) {
               : null}
           </div>
         </div>
+
         <div className="pt-6 space-x-2 flex items-center justify-end w-full">
           <Button
-            disabled={loading}
+            // disabled={loading}
             variant="outline"
             onClick={handleCancelClick}
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={loading}>
-            Continue
-          </Button>
+          <Button type="submit">Continue</Button>
         </div>
       </form>
     </Form>

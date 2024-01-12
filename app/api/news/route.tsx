@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { checkRole } from "../helper";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
       linkToSource,
       authorName,
       authorLink,
+      tagsList,
     } = body;
 
     if (!userId) {
@@ -33,10 +35,8 @@ export async function POST(req: Request) {
     if (!content) {
       return new NextResponse("Main text is required", { status: 400 });
     }
-    const user = await clerkClient.users.getUser(userId);
-    const role = user.publicMetadata.role;
-
-    if (role !== "admin" && role !== "editor") {
+    const hasAdminPrivileges = await checkRole(userId);
+    if (!hasAdminPrivileges) {
       return new NextResponse("Not enough privileges to perform this action.", {
         status: 403,
       });
@@ -56,6 +56,9 @@ export async function POST(req: Request) {
           createMany: {
             data: [...images.map((image: { url: string }) => image)],
           },
+        },
+        tags: {
+          connect: tagsList.map((tag: string) => ({ id: tag })),
         },
       },
     });

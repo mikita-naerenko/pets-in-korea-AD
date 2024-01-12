@@ -17,17 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useTagModal } from "@/hooks/use-tag-modal";
 import { Button } from "@/components/ui/button";
-import { Img } from "@/lib/interfaces";
+import { Tag } from "@/lib/interfaces";
 import ImageUpload from "@/components/ui/image-upload";
-
-interface Tag {
-  id: string;
-  label: string;
-  rusTitle: string;
-  images: Img[];
-}
 
 interface ApiResponse<T> {
   data: T[];
@@ -37,12 +29,10 @@ interface ApiResponse<T> {
   config: object;
 }
 
-export default function CreateTagForm() {
-  const tagModal = useTagModal();
-  const router = useRouter();
-
-  const [loading, setLoading] = useState(false);
+export default function EditTagForm({ tag }: { tag: Tag }) {
   const [tagsList, setTegsList] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,49 +48,26 @@ export default function CreateTagForm() {
   }, []);
 
   const formSchema = z.object({
-    tag: z
-      .string()
-      .min(1)
-      .max(20)
-      .refine(
-        (value) => {
-          // Check if the value is not in the existing tagsList
-          const isTagNotExist = !tagsList.some((tag) => tag.label === value);
-          return isTagNotExist;
-        },
-        { message: "Tag already exists" }
-      ),
-    rusTitle: z
-      .string()
-      .min(1)
-      .max(100)
-      .refine(
-        (value) => {
-          // Check if the value is not in the existing tagsList
-          const isTagNotExist = !tagsList.some((tag) => tag.rusTitle === value);
-          return isTagNotExist;
-        },
-        { message: "Tag already exists" }
-      ),
+    tag: z.string().min(1).max(20),
+    rusTitle: z.string().min(1).max(100),
     images: z.object({ url: z.string() }).array(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tag: "",
-      rusTitle: "",
-      images: [],
+      tag: tag.label,
+      rusTitle: tag.rusTitle,
+      images: tag.images && tag.images.length > 0 ? tag.images : [],
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      //   setLoading(true);
-      await axios.post("/api/tags", values);
+      setLoading(true);
+      await axios.patch(`/api/tags/${tag.id}`, values);
       console.log("Tag has been submited");
       router.push("/");
-      tagModal.onClose();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data, {
@@ -113,6 +80,7 @@ export default function CreateTagForm() {
       setLoading(false);
     }
   };
+
   return (
     <div className="w-3/5 mx-auto">
       <p>Already existing tags:</p>
@@ -171,6 +139,8 @@ export default function CreateTagForm() {
                     <FormLabel>Images</FormLabel>
                     <FormControl>
                       <ImageUpload
+                        editItem={tag}
+                        editItemType="tag"
                         value={field.value.map((image) => image.url)}
                         disabled={loading}
                         onChange={(url) =>

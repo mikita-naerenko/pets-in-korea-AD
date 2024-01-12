@@ -21,7 +21,7 @@ import { toast } from "react-hot-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import ImageUpload from "../ui/image-upload";
-import { Article } from "@/lib/interfaces";
+import { Article, Tag } from "@/lib/interfaces";
 import TextEditor from "../editor";
 
 const formSchema = z.object({
@@ -50,11 +50,6 @@ const formSchema = z.object({
 
 interface ArticleProps {
   article: Article;
-}
-
-interface Tag {
-  id: string;
-  label: string;
 }
 
 interface ApiResponse<T> {
@@ -294,6 +289,8 @@ export default function EditForm({ article }: ArticleProps) {
               <FormControl>
                 <ImageUpload
                   value={field.value.map((image) => image.url)}
+                  editItem={article}
+                  editItemType="article"
                   // disabled={loading}
                   onChange={(url) => field.onChange([...field.value, { url }])}
                   onRemove={(url) =>

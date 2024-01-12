@@ -20,6 +20,10 @@ const EditButton: React.FC<ButtonProps> = ({ article, type }) => {
   const handleEditClick = (): void => {
     if (type === "news") {
       window.location.assign(`/news/${article.id}/edit`);
+    } else if (type === "theme") {
+      window.location.assign(`/dictionary/edit/${article.id}`);
+    } else if (type === "tag") {
+      window.location.assign(`/create-tag/${article.id}`);
     } else {
       window.location.assign(`/${article.id}/edit`);
     }

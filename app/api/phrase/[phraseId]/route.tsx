@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { checkRole } from "../../helper";
 
 export async function GET(req: Request) {
   const itemID = req.url.split("/").pop();
@@ -26,25 +27,22 @@ export async function PATCH(
   const body = await req.json();
   const { phrase } = body;
 
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 403 });
-  }
-  if (!phrase) {
-    return new NextResponse("Phrase is required", {
-      status: 403,
-    });
-  }
-
-  const user = await clerkClient.users.getUser(userId);
-  const role = user.publicMetadata.role;
-
-  if (role !== "admin" && role !== "editor") {
-    return new NextResponse("Not enough privileges to perform this action.", {
-      status: 403,
-    });
-  }
-
   try {
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+    if (!phrase) {
+      return new NextResponse("Phrase is required", {
+        status: 403,
+      });
+    }
+
+    const hasAdminPrivileges = await checkRole(userId);
+    if (!hasAdminPrivileges) {
+      return new NextResponse("Not enough privileges to perform this action.", {
+        status: 403,
+      });
+    }
     const updatePhrase = await prismadb.koreanPhrase.update({
       where: {
         id: params.phraseId,
@@ -62,23 +60,20 @@ export async function PATCH(
 }
 
 export async function DELETE(req: Request) {
-  //Move to the trash
   const itemID = req.url.split("/").pop();
   const { userId } = auth();
 
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 403 });
-  }
-
-  const user = await clerkClient.users.getUser(userId);
-  const role = user.publicMetadata.role;
-
-  if (role !== "admin" && role !== "editor") {
-    return new NextResponse("Not enough privileges to perform this action.", {
-      status: 403,
-    });
-  }
   try {
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+
+    const hasAdminPrivileges = await checkRole(userId);
+    if (!hasAdminPrivileges) {
+      return new NextResponse("Not enough privileges to perform this action.", {
+        status: 403,
+      });
+    }
     const removingItem = await prismadb.koreanPhrase.findFirst({
       where: {
         id: itemID,

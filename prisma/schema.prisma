@@ -17,12 +17,14 @@ model Tag {
   rusTitle String
   images   TagImage[]
   articles Articles[]
+  theme    Theme[]
+  news     News[]
 }
 
 model TagImage {
   id        String   @id @default(uuid())
   tagId     String // Foreign Key to Product
-  news      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  news      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade) //WTF??
   url       String // URL of the image
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -57,19 +59,9 @@ model News {
   authorName   String?
   authorLink   String?     @db.Text
   images       NewsImage[]
+  tags         Tag[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-}
-
-model NewsImage {
-  id        String   @id @default(uuid())
-  newsId    String // Foreign Key to Product
-  news      News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
-  url       String // URL of the image
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([newsId])
 }
 
 model Image {
@@ -83,10 +75,34 @@ model Image {
   @@index([articleId])
 }
 
+model NewsImage {
+  id        String   @id @default(uuid())
+  newsId    String // Foreign Key to Product
+  news      News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  url       String // URL of the image
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([newsId])
+}
+
+model ThemeImage {
+  id        String   @id @default(uuid())
+  themeId   String // Foreign Key to Product
+  theme     Theme    @relation(fields: [themeId], references: [id], onDelete: Cascade)
+  url       String // URL of the image
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([themeId])
+}
+
 model Trash {
   id              String    @id @default(uuid())
   removedItemType String
   removedAt       DateTime  @default(now())
+  label           String?
+  rusLabel        String?
   title           String
   description     String?
   content         String?   @db.Text
@@ -95,6 +111,7 @@ model Trash {
   linkToSource    String?   @db.Text
   authorName      String?
   authorLink      String?   @db.Text
+  koreanPhraseId  String?
   phrases         Json?
   rusTranslates   Json?
   engTranslates   Json?
@@ -114,6 +131,8 @@ model KoreanPhrase {
   themeId       String
   engTranslates EngTranslate[]
   rusTranslates RusTranslate[]
+
+  @@index([themeId])
 }
 
 model RusTranslate {
@@ -126,6 +145,8 @@ model RusTranslate {
   theme          String
   koreanPhrase   KoreanPhrase @relation(fields: [koreanPhraseId], references: [id], onDelete: Cascade)
   koreanPhraseId String
+
+  @@index([koreanPhraseId])
 }
 
 model EngTranslate {
@@ -138,12 +159,18 @@ model EngTranslate {
   theme          String
   koreanPhrase   KoreanPhrase @relation(fields: [koreanPhraseId], references: [id], onDelete: Cascade)
   koreanPhraseId String
+
+  @@index([koreanPhraseId])
 }
 
 model Theme {
-  id        String         @id @default(uuid())
-  label     String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  phrases   KoreanPhrase[]
+  id          String         @id @default(uuid())
+  label       String
+  rusLabel    String
+  description String
+  tags        Tag[]
+  images      ThemeImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  phrases     KoreanPhrase[]
 }

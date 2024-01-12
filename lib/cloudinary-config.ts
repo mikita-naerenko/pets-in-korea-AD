@@ -1,6 +1,6 @@
 export const cloudinaryConfig = {
-  cloud_name: "dcwrm1om8",
-  api_key: "465283724976836",
-  api_secret: "G6AxmqqQu3rCWMDSFf8bgZqM1RU",
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY_SECRET,
   secure: true,
 };

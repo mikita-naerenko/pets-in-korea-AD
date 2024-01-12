@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs";
+import { checkRole } from "../helper";
 
 import prismadb from "@/lib/prismadb";
 
@@ -25,10 +26,8 @@ export async function POST(req: Request) {
       });
     }
 
-    const user = await clerkClient.users.getUser(userId);
-    const role = user.publicMetadata.role;
-
-    if (role !== "admin" && role !== "editor") {
+    const hasAdminPrivileges = await checkRole(userId);
+    if (!hasAdminPrivileges) {
       return new NextResponse("Not enough privileges to perform this action.", {
         status: 403,
       });

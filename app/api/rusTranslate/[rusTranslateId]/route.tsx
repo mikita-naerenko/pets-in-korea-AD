@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { checkRole } from "../../helper";
 
 export async function PATCH(
   req: Request,
@@ -12,30 +13,28 @@ export async function PATCH(
   const body = await req.json();
   const { translate, transcription } = body;
 
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 403 });
-  }
-  if (!translate) {
-    return new NextResponse("Translate is required", {
-      status: 403,
-    });
-  }
-  if (!transcription) {
-    return new NextResponse("Transcription is required", {
-      status: 403,
-    });
-  }
-
-  const user = await clerkClient.users.getUser(userId);
-  const role = user.publicMetadata.role;
-
-  if (role !== "admin" && role !== "editor") {
-    return new NextResponse("Not enough privileges to perform this action.", {
-      status: 403,
-    });
-  }
-
   try {
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+    if (!translate) {
+      return new NextResponse("Translate is required", {
+        status: 403,
+      });
+    }
+    if (!transcription) {
+      return new NextResponse("Transcription is required", {
+        status: 403,
+      });
+    }
+
+    const hasAdminPrivileges = await checkRole(userId);
+    if (!hasAdminPrivileges) {
+      return new NextResponse("Not enough privileges to perform this action.", {
+        status: 403,
+      });
+    }
+
     const updatePhrase = await prismadb.rusTranslate.update({
       where: {
         id: params.rusTranslateId,

@@ -18,10 +18,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import ImageUpload from "@/components/ui/image-upload";
-import TextEditor from "../editor";
+import { Theme } from "@/lib/interfaces";
 
 interface Tag {
   id: string;
@@ -36,21 +36,10 @@ interface ApiResponse<T> {
   config: object;
 }
 
-const formSchema = z.object({
-  title: z.string().min(1),
-  linkToSource: z.string().min(1),
-  nameOfSource: z.string().min(1),
-  description: z.string().min(1),
-  content: z.string().min(1),
-  images: z.object({ url: z.string() }).array(),
-  tagsList: z.array(z.string()).refine((data) => data.length > 0, {
-    message: "Please select at least one tag",
-  }),
-});
-
-export default function CreateNewsForm() {
+export default function CreateThemeForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [themesList, setThemesList] = useState<Theme[]>([]);
   const [tagsList, setTegsList] = useState<Tag[]>([]);
 
   useEffect(() => {
@@ -66,16 +55,54 @@ export default function CreateNewsForm() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response: ApiResponse<Theme> = await axios.get("/api/theme");
+        setThemesList(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data, {
+            duration: 10000,
+          });
+        } else {
+          toast.error("Something went wrong");
+        }
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const formSchema = z.object({
+    rusLabel: z.string().min(1).max(300),
+    label: z
+      .string()
+      .min(1)
+      .refine(
+        (value) => {
+          // Check if the value is not in the existing theme list
+          const isTagNotExist = !themesList.some(
+            (theme) => theme.label === value
+          );
+          return isTagNotExist;
+        },
+        { message: "The theme already exists" }
+      ),
+    description: z.string().min(1).max(200),
+    tagsList: z.array(z.string()),
+    images: z.object({ url: z.string() }).array(),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
+      label: "",
+      rusLabel: "",
       description: "",
-      nameOfSource: "",
-      linkToSource: "",
-      content: "",
-      images: [],
       tagsList: [],
+      images: [],
     },
   });
 
@@ -83,10 +110,9 @@ export default function CreateNewsForm() {
     console.log(values);
     try {
       setLoading(true);
-      const response = await axios.post("/api/news", values);
-      toast.success("News has been created");
-      console.log("News has been created");
-      router.push("/");
+      const response = await axios.post("/api/theme", values);
+      console.log("Theme has been submitted");
+      //   window.location.assign(`/${response.data.id}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data, {
@@ -101,33 +127,68 @@ export default function CreateNewsForm() {
   };
 
   const onCancel = () => {
-    router.push("/");
+    router.back();
   };
 
   return (
     <div className="w-3/5 mx-auto">
       <div className="space-y-4 py-2 pb-4">
         <div className="space-y-2">
+          <div>
+            <p>Already existing themes:</p>
+            {themesList.length > 0
+              ? themesList.map((theme) => (
+                  <span key={theme.id} className="mr-2">
+                    #{theme.label}
+                  </span>
+                ))
+              : null}
+          </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormDescription className="text-center text-3xl">
-                Create a news
+                Create a new theme
               </FormDescription>
               <FormField
                 control={form.control}
-                name="title"
+                name="label"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      <p className="mt-3">Title length: {field.value.length}</p>
+                      <p className="mt-4">Label length: {field.value.length}</p>
                       <p className=" text-xs text-slate-400 mb-3">
-                        Recommended length between 10 and 60 characters
+                        Maxlength - 300
                       </p>
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
-                        placeholder="Title of Article"
+                        placeholder="label"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="rusLabel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <p className="mt-4">
+                        RusLabel length: {field.value.length}
+                      </p>
+                      <p className=" text-xs text-slate-400 mb-3">
+                        Maxlength - 300
+                      </p>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Russian label"
                         {...field}
                       />
                     </FormControl>
@@ -141,11 +202,11 @@ export default function CreateNewsForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      <p className="mt-3">
+                      <p className="mt-4">
                         Description length: {field.value.length}
                       </p>
                       <p className=" text-xs text-slate-400 mb-3">
-                        Recommended length between 50 and 150 characters
+                        *Recommended length between 50 and 150 characters
                       </p>
                     </FormLabel>
                     <FormControl>
@@ -159,57 +220,7 @@ export default function CreateNewsForm() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="linkToSource"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <p className="mt-3">Paste link to news&apos; source</p>
-                      <p className=" text-xs text-slate-400 mb-3"></p>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="Paste here"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="nameOfSource"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <p className="mt-3">Name of news&apos; source</p>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="Name of news' source"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <TextEditor {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="images"
