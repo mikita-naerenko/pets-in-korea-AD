@@ -15,7 +15,7 @@ const TagsTableBody = ({ tagsList }: { tagsList: Tag[] }) => {
             <TableCell className="font-medium">{tag.label}</TableCell>
             <TableCell className="font-medium">{tag.rusTitle}</TableCell>
             <TableCell className="font-medium">
-              {tag.images[0]?.url ? (
+              {tag?.images?.[0]?.url ? (
                 <Image
                   src={tag.images[0].url}
                   width={50}
@@ -28,7 +28,9 @@ const TagsTableBody = ({ tagsList }: { tagsList: Tag[] }) => {
 
               {/* {tag.images[0]?.url || "none"} */}
             </TableCell>
-            <TableCell className="font-medium">{tag.articles.length}</TableCell>
+            <TableCell className="font-medium">
+              {tag?.articles?.length}
+            </TableCell>
             <TableCell>
               <Button variant="ghost">View all </Button>
             </TableCell>
