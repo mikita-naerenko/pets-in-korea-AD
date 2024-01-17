@@ -23,7 +23,17 @@ export async function GET(req: Request) {
       });
       return NextResponse.json(theme);
     } else {
-      const themes = await prismadb.theme.findMany({});
+      const themes = await prismadb.theme.findMany({
+        include: {
+          phrases: {
+            include: {
+              rusTranslates: true,
+              engTranslates: true,
+            },
+          },
+          images: true,
+        },
+      });
 
       return NextResponse.json(themes);
     }
