@@ -53,9 +53,9 @@ export default function CreatePhraseForm() {
       .string()
       .min(1)
       .max(200)
-      .regex(regexSet.korTranslate, {
-        message: "The phrase should be in Korean",
-      })
+      // .regex(regexSet.korTranslate, {
+      //   message: "The phrase should be in Korean",
+      // })
       .refine((data) => data.length > 0, {
         message: "This field is required.",
       }),
@@ -65,21 +65,15 @@ export default function CreatePhraseForm() {
       .refine((data) => data.length > 0, {
         message: "This field is required.",
       }),
-    toRusTranslate: z
-      .string()
-      .min(1)
-      .max(200)
-      .regex(regexSet.rusTranslate, {
-        message: "The translate should be in Russian",
-      }),
-    toRusTranscription: z
-      .string()
-      .min(1)
-      .max(200)
-      .regex(regexSet.rusTranslate, {
-        message: "The transcription should be in Russian",
-      }),
-
+    toRusTranslate: z.string().min(1).max(200),
+    // .regex(regexSet.rusTranslate, {
+    //   message: "The translate should be in Russian"
+    //   ,
+    // })
+    toRusTranscription: z.string().min(1).max(200),
+    // .regex(regexSet.rusTranslate, {
+    //   message: "The transcription should be in Russian",
+    // })
     toEngTranslate: addEng
       ? z.string().min(1).max(200).regex(regexSet.engTranslate, {
           message: "The translate should be in English",

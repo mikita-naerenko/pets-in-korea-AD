@@ -112,7 +112,7 @@ export default function CreateThemeForm() {
       setLoading(true);
       const response = await axios.post("/api/theme", values);
       console.log("Theme has been submitted");
-      //   window.location.assign(`/${response.data.id}`);
+      router.push("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data, {
