@@ -19,11 +19,27 @@ const TextEditor = forwardRef(
         }}
         init={{
           plugins:
-            "  anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks",
+            "  anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks code",
           toolbar:
-            "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+            "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat code",
           tinycomments_mode: "embedded",
           tinycomments_author: "Author name",
+          // valid_elements:
+          //   "p[itemtype|itemscope|itemprop|id|class|style|title|dir<ltr?rtl|lang|xml::lang|onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onkeypress|onkeydown|onkeyup]",
+          extended_valid_elements:
+            "p[itemtype|itemscope|itemprop|id|dir<ltr?rtl|lang|xml::lang]," +
+            "h2[itemtype|itemscope|itemprop]," +
+            "div[itemtype|itemscope|itemprop]," +
+            "ul[itemtype|itemscope|itemprop]," +
+            "ol[itemtype|itemscope|itemprop]," +
+            "li[itemtype|itemscope|itemprop]," +
+            "h1[itemtype|itemscope|itemprop]," +
+            "h3[itemtype|itemscope|itemprop]," +
+            "h4[itemtype|itemscope|itemprop]," +
+            "h5[itemtype|itemscope|itemprop]," +
+            "h6[itemtype|itemscope|itemprop]," +
+            "strong[itemtype|itemscope|itemprop]",
+
           language: "ru",
           height: 800,
         }}

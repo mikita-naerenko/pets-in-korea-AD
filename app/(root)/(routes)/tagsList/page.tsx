@@ -6,6 +6,5 @@ export default async function Page() {
   const tagsList = await prismadb.tag.findMany({
     include: { articles: true, images: true },
   });
-  console.log(tagsList);
   return <TagsTable tagsList={tagsList} />;
 }
