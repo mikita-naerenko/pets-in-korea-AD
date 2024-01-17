@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { EmailTemplate } from "@/components/email-template";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
+const resend = new Resend("re_efwhafs2_MR4nFDkhnC1G4gxHcKZwm2cg");
 
 export async function POST(req: Request) {
   console.log("pass");
