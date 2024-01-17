@@ -8,18 +8,16 @@ export async function POST(req: Request) {
   console.log("pass");
   const body = await req.json();
   const { text } = body;
-  const { data, error } = await resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
-    to: ["delivered@resend.dev"],
-    subject: "Hello world",
-    react: EmailTemplate({ firstName: "John" }),
-  });
-
-  if (error) {
-    return new NextResponse(error.message, {
-      status: 400,
+  try {
+    const data = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: ["delivered@resend.dev"],
+      subject: "Hello world",
+      react: EmailTemplate({ firstName: "John" }),
     });
-  }
 
-  return NextResponse.json(data);
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error });
+  }
 }
