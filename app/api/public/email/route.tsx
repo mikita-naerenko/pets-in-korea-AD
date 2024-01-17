@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { EmailTemplate } from "@/components/email-template";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 
 export async function POST(req: Request) {
   console.log("pass");
@@ -21,3 +21,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error });
   }
 }
+// git add .
+// git commit -m 'test'
+// git push
