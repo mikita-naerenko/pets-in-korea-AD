@@ -5,16 +5,18 @@ import { Resend } from "resend";
 const resend = new Resend("re_efwhafs2_MR4nFDkhnC1G4gxHcKZwm2cg");
 
 export async function POST(req: Request) {
-  console.log("pass");
   const body = await req.json();
-  const { text } = body;
+  const { text, email } = body;
+
   try {
     const data = await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
-      to: ["delivered@resend.dev"],
-      subject: "Hello world",
-      text: "test",
+      from: "Mikita <onboarding@resend.dev>",
+      to: ["tetropak555666@gmail.com"],
+      subject: "CTA-button",
+      react: EmailTemplate({ text: text }),
+      //   text: text,
     });
+    console.log(data);
 
     return NextResponse.json(data);
   } catch (error) {
