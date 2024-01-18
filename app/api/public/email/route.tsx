@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       from: "Mikita <onboarding@resend.dev>",
       to: ["tetropak555666@gmail.com"],
       subject: "CTA-button",
-      react: EmailTemplate({ text: text }),
+      react: EmailTemplate({ text: text }) || "",
       //   text: text,
     });
     console.log(data);
