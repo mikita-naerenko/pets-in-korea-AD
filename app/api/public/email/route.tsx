@@ -6,15 +6,22 @@ const resend = new Resend("re_efwhafs2_MR4nFDkhnC1G4gxHcKZwm2cg");
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { text, email } = body;
+  const { text, email, name } = body;
 
   try {
+    if (!text && !email) {
+      return new NextResponse(
+        "Адрес почты и текст сообщения - обязательные поля!",
+        {
+          status: 400,
+        }
+      );
+    }
     const data = await resend.emails.send({
       from: "Mikita <onboarding@resend.dev>",
       to: ["tetropak555666@gmail.com"],
       subject: "CTA-button",
-      react: EmailTemplate({ text: text }) || "",
-      //   text: text,
+      react: EmailTemplate({ text: text, email: email, name: name }) || "",
     });
     console.log(data);
 
