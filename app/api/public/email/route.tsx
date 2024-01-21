@@ -8,7 +8,7 @@ export async function OPTIONS(request: Request) {
   return new Response("Hello, Next.js!", {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": "https://www.pets-in-korea.com/",
+      "Access-Control-Allow-Origin": "https://www.pets-in-korea.com",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers":
         "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
