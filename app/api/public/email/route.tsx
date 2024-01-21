@@ -4,9 +4,26 @@ import { Resend } from "resend";
 
 const resend = new Resend("re_efwhafs2_MR4nFDkhnC1G4gxHcKZwm2cg");
 
+export async function OPTIONS(request: Request) {
+  return new Response("Hello, Next.js!", {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "https://www.pets-in-korea.com/",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+    },
+  });
+}
+
 export async function POST(req: Request) {
   const body = await req.json();
   const { text, email, name } = body;
+  if (req.method === "OPTIONS") {
+    // Handle preflight requests
+
+    return NextResponse.json({ status: "ok" });
+  }
 
   try {
     if (!text && !email) {
